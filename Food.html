@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Kiosk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .kiosk-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .cart-summary {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .cart-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .cart-count {
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .menu-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .categories {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid transparent;
+            color: #667eea;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .category-btn.active,
+        .category-btn:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .menu-item {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .item-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .item-description {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .item-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #2ed573, #7bed9f);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(46, 213, 115, 0.3);
+        }
+
+        .dietary-tags {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .dietary-tag {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .cart-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .cart-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-items {
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .qty-btn:hover {
+            background: #5a67d8;
+            transform: scale(1.1);
+        }
+
+        .cart-total {
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .total-final {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #667eea;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #ff4757, #ff6b7a);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.3);
+        }
+
+        .checkout-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-cart i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .modal-text {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #495057;
+            border: 2px solid #dee2e6;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .order-status {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .status-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .status-pending { color: #ff9f43; }
+        .status-preparing { color: #3742fa; }
+        .status-ready { color: #2ed573; }
+        .status-served { color: #57606f; }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-panel {
+                position: static;
+                order: -1;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .categories {
+                justify-content: center;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="kiosk-container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-utensils"></i>
+                <span>Restaurant Kiosk</span>
+            </div>
+            <div class="cart-summary">
+                <button class="cart-button" onclick="toggleCart()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Cart</span>
+                    <span class="cart-count" id="cart-count" style="display: none;">0</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="menu-section">
+                <div class="categories" id="categories">
+                    <button class="category-btn active" onclick="filterCategory('all')">All Items</button>
+                </div>
+
+                <div class="menu-grid" id="menu-grid">
+                </div>
+            </div>
+
+            <div class="cart-panel">
+                <h2 class="cart-title">
+                    <i class="fas fa-shopping-cart"></i>
+                    Your Order
+                </h2>
+
+                <div id="cart-content">
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Your cart is empty</h3>
+                        <p>Add some delicious items to get started!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">Confirm Your Order</h2>
+            <div id="order-summary" class="modal-text"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="placeOrder()">
+                    <span id="place-order-text">Place Order</span>
+                    <span id="place-order-loading" class="loading" style="display: none;"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">Order Placed Successfully!</h2>
+            <div class="modal-text">
+                <p><strong>Order Number:</strong> <span id="order-number"></span></p>
+                <p><strong>Estimated Ready Time:</strong> <span id="ready-time"></span></p>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="closeSuccessModal()">Continue Shopping</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5002/api';
+        let menuItems = [];
+        let cart = [];
+        let currentCategory = 'all';
+
+        async function loadMenu() {
+            try {
+                const response = await fetch(`${API_BASE}/menu`);
+                const data = await response.json();
+
+                if (Array.isArray(data)) {
+                    menuItems = data.filter(item => item.is_available);
+                    displayMenu();
+                    updateCategories();
+                } else {
+                    console.error('Invalid menu data:', data);
+                    showSampleMenu();
+                }
+            } catch (error) {
+                console.error('Error loading menu:', error);
+                showSampleMenu();
+            }
+        }
+
+        function showSampleMenu() {
+            menuItems = [
+                {
+                    id: '1',
+                    name: 'Classic Burger',
+                    category: 'main',
+                    price: 12.99,
+                    description: 'Juicy beef patty with lettuce, tomato, onion, and our special sauce',
+                    dietary_tags: [],
+                    preparation_time: 15
+                },
+                {
+                    id: '2',
+                    name: 'Caesar Salad',
+                    category: 'salad',
+                    price: 8.99,
+                    description: 'Crisp romaine lettuce with parmesan, croutons, and Caesar dressing',
+                    dietary_tags: ['vegetarian'],
+                    preparation_time: 8
+                },
+                {
+                    id: '3',
+                    name: 'Margherita Pizza',
+                    category: 'main',
+                    price: 14.99,
+                    description: 'Fresh mozzarella, tomato sauce, and basil on crispy crust',
+                    dietary_tags: ['vegetarian'],
+                    preparation_time: 20
+                },
+                {
+                    id: '4',
+                    name: 'Chocolate Cake',
+                    category: 'dessert',
+                    price: 6.99,
+                    description: 'Rich chocolate cake with chocolate frosting',
+                    dietary_tags: [],
+                    preparation_time: 5
+                },
+                {
+                    id: '5',
+                    name: 'Fresh Orange Juice',
+                    category: 'beverage',
+                    price: 3.99,
+                    description: 'Freshly squeezed orange juice',
+                    dietary_tags: ['vegan', 'gluten-free'],
+                    preparation_time: 2
+                }
+            ];
+            displayMenu();
+            updateCategories();
+        }
+
+        function updateCategories() {
+            const categories = [...new Set(menuItems.map(item => item.category))];
+            const categoriesContainer = document.getElementById('categories');
+
+            categoriesContainer.innerHTML = `
+                <button class="category-btn active" onclick="filterCategory('all')">All Items</button>
+                ${categories.map(cat =>
+                    `<button class="category-btn" onclick="filterCategory('${cat}')">${capitalizeFirst(cat)}</button>`
+                ).join('')}
+            `;
+        }
+
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function filterCategory(category) {
+            currentCategory = category;
+
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            displayMenu();
+        }
+
+        function displayMenu() {
+            const filteredItems = currentCategory === 'all'
+                ? menuItems
+                : menuItems.filter(item => item.category === currentCategory);
+
+            const menuGrid = document.getElementById('menu-grid');
+
+            menuGrid.innerHTML = filteredItems.map(item => `
+                <div class="menu-item" onclick="addToCart('${item.id}')">
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-description">${item.description}</div>
+                    <div class="item-footer">
+                        <div class="item-price">$${item.price.toFixed(2)}</div>
+                        <button class="add-btn">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+                    ${item.dietary_tags && item.dietary_tags.length > 0 ? `
+                        <div class="dietary-tags">
+                            ${item.dietary_tags.map(tag => `<span class="dietary-tag">${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function addToCart(itemId) {
+            const item = menuItems.find(i => i.id === itemId);
+            if (!item) return;
+
+            const existingItem = cart.find(i => i.id === itemId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: itemId,
+                    name: item.name,
+                    price: item.price,
+                    quantity: 1
+                });
+            }
+
+            updateCartDisplay();
+            updateCartCount();
+        }
+
+        function removeFromCart(itemId) {
+            const itemIndex = cart.findIndex(i => i.id === itemId);
+            if (itemIndex > -1) {
+                cart.splice(itemIndex, 1);
+                updateCartDisplay();
+                updateCartCount();
+            }
+        }
+
+        function updateQuantity(itemId, change) {
+            const item = cart.find(i => i.id === itemId);
+            if (!item) return;
+
+            item.quantity += change;
+
+            if (item.quantity <= 0) {
+                removeFromCart(itemId);
+            } else {
+                updateCartDisplay();
+                updateCartCount();
+            }
+        }
+
+        function updateCartCount() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCount = document.getElementById('cart-count');
+
+            if (totalItems > 0) {
+                cartCount.textContent = totalItems;
+                cartCount.style.display = 'flex';
+            } else {
+                cartCount.style.display = 'none';
+            }
+        }
+
+        function updateCartDisplay() {
+            const cartContent = document.getElementById('cart-content');
+
+            if (cart.length === 0) {
+                cartContent.innerHTML = `
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Your cart is empty</h3>
+                        <p>Add some delicious items to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = subtotal * 0.08;
+            const total = subtotal + tax;
+
+            cartContent.innerHTML = `
+                <div class="cart-items">
+                    ${cart.map(item => `
+                        <div class="cart-item">
+                            <div class="cart-item-info">
+                                <div class="cart-item-name">${item.name}</div>
+                                <div class="cart-item-price">$${item.price.toFixed(2)} each</div>
+                            </div>
+                            <div class="quantity-controls">
+                                <button class="qty-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
+                                <span>${item.quantity}</span>
+                                <button class="qty-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="cart-total">
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span>$${subtotal.toFixed(2)}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Tax (8%):</span>
+                        <span>$${tax.toFixed(2)}</span>
+                    </div>
+                    <div class="total-row total-final">
+                        <span>Total:</span>
+                        <span>$${total.toFixed(2)}</span>
+                    </div>
+                </div>
+
+                <button class="checkout-btn" onclick="showCheckout()">
+                    <i class="fas fa-credit-card"></i>
+                    Checkout - $${total.toFixed(2)}
+                </button>
+            `;
+        }
+
+        function showCheckout() {
+            if (cart.length === 0) return;
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = subtotal * 0.08;
+            const total = subtotal + tax;
+
+            const orderSummary = document.getElementById('order-summary');
+            orderSummary.innerHTML = `
+                <div style="text-align: left; margin-bottom: 20px;">
+                    ${cart.map(item => `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>${item.name} x${item.quantity}</span>
+                            <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                        </div>
+                    `).join('')}
+                    <hr style="margin: 15px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Subtotal:</span>
+                        <span>$${subtotal.toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Tax:</span>
+                        <span>$${tax.toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem;">
+                        <span>Total:</span>
+                        <span>$${total.toFixed(2)}</span>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('checkout-modal').style.display = 'flex';
+        }
+
+        async function placeOrder() {
+            const placeOrderText = document.getElementById('place-order-text');
+            const placeOrderLoading = document.getElementById('place-order-loading');
+
+            placeOrderText.style.display = 'none';
+            placeOrderLoading.style.display = 'inline-block';
+
+            const orderData = {
+                items: cart.map(item => ({
+                    menu_item_id: item.id,
+                    quantity: item.quantity,
+                    special_requests: ''
+                })),
+                total_amount: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * 1.08,
+                special_notes: ''
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/orders`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('order-number').textContent = result.order_id.substring(0, 8).toUpperCase();
+                    document.getElementById('ready-time').textContent = new Date(result.estimated_ready_time).toLocaleTimeString();
+
+                    closeModal();
+                    document.getElementById('success-modal').style.display = 'flex';
+
+                    cart = [];
+                    updateCartDisplay();
+                    updateCartCount();
+                } else {
+                    throw new Error('Order failed');
+                }
+
+            } catch (error) {
+                console.error('Error placing order:', error);
+                alert('Sorry, there was an error placing your order. Please try again.');
+            }
+
+            placeOrderText.style.display = 'inline';
+            placeOrderLoading.style.display = 'none';
+        }
+
+        function closeModal() {
+            document.getElementById('checkout-modal').style.display = 'none';
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('success-modal').style.display = 'none';
+        }
+
+        function toggleCart() {
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMenu();
+        });
+    </script>
+</body>
+</html>
